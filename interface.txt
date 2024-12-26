@@ -1,0 +1,804 @@
+1. Sign in(Log in)
+
+url : POST/api/v1/auth/sign-in
+
+- request
+{
+    *email : String
+    *password : String
+}
+
+- response
+
+success
+Http Status - 200 (ok)
+{
+    code : "SU"
+    message : "Success."
+    token : "jwt...",
+    expiredDate: 123456789
+}
+
+fail
+
+- essential info unfilled
+
+- Login Failure
+Http status - 401 (Unauthorized)
+{
+    code : "SF" (signing fail)
+    message : "Sign in failed."
+}
+
+- DataBase Error
+Http status - 500 (Internal Server Error)
+{
+    code: "DE",
+    message: "Database Error."
+}
+
+===============================================================
+
+2. Sign up
+
+url : POST/api/v1/auth/sign-up
+
+- request 
+
+{
+    *email: String,
+    *password: String,
+    *nickName: String,
+    *telNumber: String,
+    *Address: String,
+    Address Detail: String
+}
+
+- response
+
+Success
+Http Status - 200 (ok)
+{
+    code : "SU"
+    message : "Success."
+}
+
+Failure
+
+- email format inappropriate / wrong length of password / telNum format wrong / essential info unfilled
+
+- duplicated email
+Http Status - 400 (Bad request)
+{
+    code : "EE"
+    message : "Existed Email."
+}
+
+- DataBase Error
+Http status - 500 (Internal Server Error)
+{
+    code: "DE",
+    message: "Database Error."
+}
+
+===============================================================
+
+3. Updating weeklyTop3 posts
+
+url : GET /api/v1/board/top-3
+
+- response
+
+success
+
+HTTP status - 200 (ok)
+{
+    code : "SU",
+    message : "Success."
+    top3List : boardListItem[]
+}
+
+boardListItem
+{
+    boardNumber : int,
+    title : string,
+    content : string, 
+    boardTitleImage : string,
+    favoriteCount : int,
+    commentCount : int,
+    viewComment : int,
+    writeDateTime : string,
+    writerNickname : string,
+    writerProfileImage : string,
+}
+
+failure
+
+- DataBase Error
+Http status - 500 (Internal Server Error)
+{
+    code: "DE",
+    message: "Database Error."
+}
+
+===============================================================
+
+4. Current(new) posts
+
+url : GET /api/v1/board/current-list/{pageNumber}
+
+- response
+
+success
+
+HTTP status - 200 (ok)
+{
+    code : "SU",
+    message : "Success."
+    currentList : boardListItem[]
+}
+
+boardListItem
+{
+    boardNumber : int,
+    title : string,
+    content : string, 
+    boardTitleImage : string,
+    favoriteCount : int,
+    commentCount : int,
+    viewComment : int,
+    writeDateTime : string,
+    writerNickname : string,
+    writerProfileImage : string,
+}
+
+failure
+
+- DataBase Error
+Http status - 500 (Internal Server Error)
+{
+    code: "DE",
+    message: "Database Error."
+}
+
+===============================================================
+
+5. PopularWordList
+
+url : GET /api/v1/search/popular-list
+
+- response
+
+success
+
+HTTP status - 200 (ok)
+{
+    code : "SU",
+    message : "Success."
+    popularWordList : String[]
+}
+
+failure
+
+- DataBase Error
+Http status - 500 (Internal Server Error)
+{
+    code: "DE",
+    message: "Database Error."
+}
+
+===============================================================
+
+6. SearchList(특정 유저 게시물 리스트)
+
+url : GET /api/v1/board/user-board-list/{email}
+
+- response
+
+success
+
+HTTP status - 200 (ok)
+{
+    code : "SU",
+    message : "Success."
+    searchList : boardListItem[]
+}
+
+boardListItem
+{
+    boardNumber : int,
+    title : string,
+    content : string, 
+    boardTitleImage : string,
+    favoriteCount : int,
+    commentCount : int,
+    viewComment : int,
+    writeDateTime : string,
+    writerNickname : string,
+    writerProfileImage : string,
+}
+
+failure
+
+- DataBase Error
+Http status - 500 (Internal Server Error)
+{
+    code: "DE",
+    message: "Database Error."
+}
+
+===============================================================
+
+7. relativeWordList
+
+url : GET /api/v1/search/{searchWord}/relation-list
+
+- response
+
+success
+
+HTTP status - 200 (ok)
+{
+    code : "SU",
+    message : "Success."
+    relativeWordList : String[]
+}
+
+failure
+
+- DataBase Error
+Http status - 500 (Internal Server Error)
+{
+    code: "DE",
+    message: "Database Error."
+}
+
+===============================================================
+
+8. Board Detail(게시물 상세 보기)
+
+url : GET /api/v1/board/{boardNumber}
+
+- response
+
+success
+
+HTTP status - 200 (ok)
+{
+    code : "SU",
+    message : "Success."
+    boardNumber : int,
+    title : string,
+    content : string, 
+    boardImage : string[],
+    writeDateTime : string,
+    writerEmail : string,
+    writerNickname : string,
+    writerProfileImage : string,
+}
+
+failure
+
+- board not existing
+
+Http status - 400 (Bad request)
+{
+    code: "NB",
+    message: "No exist boardNumber."
+}
+
+- DataBase Error
+Http status - 500 (Internal Server Error)
+{
+    code: "DE",
+    message: "Database Error."
+}
+
+===============================================================
+
+9. Favorite List (좋아요 리스트 불러오기)
+
+url : GET /api/v1/board/{boardNumber}/favorite-list
+
+-response
+
+success
+
+HTTP status - 200 (ok)
+{
+    code : "SU",
+    message : "Success."
+    FavoriteList : FavoriteListItem[]
+}
+
+FavoriteListItem{
+    email : string,
+    nickName : string,
+    profileImage : string
+}
+
+failure
+
+- DataBase Error
+Http status - 500 (Internal Server Error)
+{
+    code: "DE",
+    message: "Database Error."
+}
+
+===============================================================
+
+10. Favorite(Like)
+
+url : PUT /api/v1/board/{boardNumber}/favorite
+
+header: (Authorization : Bearer Token)
+
+- request
+
+{
+    boardNumber : int
+}
+
+- response
+
+success
+
+HTTP status - 200 (ok)
+{
+    code : "SU",
+    message : "Success."
+}
+
+failure
+
+- DataBase Error
+Http status - 500 (Internal Server Error)
+{
+    code: "DE",
+    message: "Database Error."
+}
+
+
+===============================================================
+
+11. Comment List (댓글 불러오기)
+
+url : GET /api/v1/board/{boardNumber}/comment-list
+
+- response
+
+success
+
+HTTP status - 200 (ok)
+{
+    code : "SU",
+    message : "Success."
+    commentList : commentListItem[]
+}
+
+CommentListItem {
+    email : string, 
+    nickName : string,
+    writeDateTime : string,
+    content : string
+}
+
+failure
+
+- DataBase Error
+Http status - 500 (Internal Server Error)
+{
+    code: "DE",
+    message: "Database Error."
+}
+
+
+===============================================================
+
+12. Write/Post Comment
+
+url : POST /api/v1/board/current-list/{pageNumber}
+
+- request
+
+{
+    content : string
+}
+
+success
+
+HTTP status - 200 (ok)
+
+{
+    code : "SU",
+    message : "Success."
+}
+
+failure
+
+- not existing board
+
+Http status - 400 (Bad request)
+{
+    code : "NB",
+    message : "No existed Board"
+}
+
+- not existing user
+Http status - 400 (Bad request)
+{
+    code : "NU",
+    message : "No existed User"
+}
+
+- DataBase Error
+Http status - 500 (Internal Server Error)
+{
+    code: "DE",
+    message: "Database Error."
+}
+
+
+===============================================================
+
+13. Delete post
+
+url : DELETE /api/v1/board/{boardNumber}
+
+header: (Authorization : Bearer Token)
+
+-response
+
+success
+
+HTTP status - 200 (ok)
+
+{
+    code : "SU",
+    message : "Success."
+}
+
+failure
+
+- not existing board
+
+Http status - 400 (Bad request)
+{
+    code : "NB",
+    message : "No existed Board"
+}
+
+- not existing user
+
+Http status - 400 (Bad request)
+{
+    code : "NU",
+    message : "No existed User"
+}
+
+- Unauthorized
+
+Http status - 403 (Forbidden)
+{
+    code : "NP",
+    message : "No Permission"
+}
+
+- DataBase Error
+
+Http status - 500 (Internal Server Error)
+{
+    code: "DE",
+    message: "Database Error."
+}
+
+
+
+===============================================================
+
+14. Write post
+
+url : POST /api/v1/board
+
+header: (Authorization : Bearer Token)
+
+- request
+
+{
+    *title : string,
+    *content : string, 
+    boardImageList : string[]
+}
+
+- response
+
+success
+
+HTTP status - 200 (ok)
+
+{
+    code : "SU",
+    message : "Success."
+}
+
+failure
+
+- not existing user
+
+Http status - 400 (Bad request)
+{
+    code : "NU",
+    message : "No existed User"
+}
+
+- DataBase Error
+
+Http status - 500 (Internal Server Error)
+{
+    code: "DE",
+    message: "Database Error."
+}
+
+
+===============================================================
+
+15. boardUpdate (게시물 수정)
+
+url : PATCH /api/v1/board/{boardNumber}
+
+header: (Authorization : Bearer Token)
+
+- request
+
+{
+    *title : string,
+    *content : string, 
+    boardImageList : string[]
+}
+
+- response
+
+success
+
+HTTP status - 200 (ok)
+
+{
+    code : "SU",
+    message : "Success."
+}
+
+failure
+
+- not existing board
+
+Http status - 400 (Bad request)
+{
+    code : "NB",
+    message : "No existed Board"
+}
+
+- not existing user
+
+Http status - 400 (Bad request)
+{
+    code : "NU",
+    message : "No existed User"
+}
+
+- DataBase Error
+
+Http status - 500 (Internal Server Error)
+{
+    code: "DE",
+    message: "Database Error."
+}
+
+===============================================================
+
+16. getUser (유저 정보)
+
+url : GET /api/v1/user/{email}
+
+- response
+
+success
+
+HTTP status - 200 (ok)
+
+{
+    code : "SU",
+    message : "Success."
+    email : string,
+    nickName : string,
+    profile : string
+}
+
+failure
+
+- not existing user
+
+Http status - 400 (Bad request)
+{
+    code : "NU",
+    message : "No existed User"
+}
+
+- DataBase Error
+
+Http status - 500 (Internal Server Error)
+{
+    code: "DE",
+    message: "Database Error."
+}
+
+
+===============================================================
+17. userBoardList (특정 유저 게시물 리스트)
+
+- response
+
+success
+
+HTTP status - 200 (ok)
+{
+    code : "SU",
+    message : "Success."
+    boardList : boardListItem[]
+}
+
+boardListItem
+{
+    boardNumber : int,
+    title : string,
+    content : string, 
+    boardTitleImage : string,
+    favoriteCount : int,
+    commentCount : int,
+    viewComment : int,
+    writeDateTime : string,
+    writerNickname : string,
+    writerProfileImage : string,
+}
+
+failure
+
+- DataBase Error
+Http status - 500 (Internal Server Error)
+{
+    code: "DE",
+    message: "Database Error."
+}
+
+===============================================================
+
+18. searchList (검색 게시물 리스트)
+
+- response
+
+success
+
+HTTP status - 200 (ok)
+{
+    code : "SU",
+    message : "Success."
+    searchList : boardListItem[]
+}
+
+boardListItem
+{
+    boardNumber : int,
+    title : string,
+    content : string, 
+    boardTitleImage : string,
+    favoriteCount : int,
+    commentCount : int,
+    viewComment : int,
+    writeDateTime : string,
+    writerNickname : string,
+    writerProfileImage : string,
+}
+
+failure
+
+- DataBase Error
+Http status - 500 (Internal Server Error)
+{
+    code: "DE",
+    message: "Database Error."
+}
+
+===============================================================
+
+19. patchNickname (닉네임 수정)
+
+URL : PATCH /api/v1/user/nickname
+
+header: (Authorization : Bearer Token)
+
+-request
+
+{
+    *nickName : string
+}
+
+-response
+
+success
+
+HTTP status - 200 (ok)
+{
+    code : "SU",
+    message : "Success."
+}
+
+failure
+
+- not existing user
+
+Http status - 400 (Bad request)
+{
+    code : "NU",
+    message : "No existed User"
+}
+
+
+- DataBase Error
+
+Http status - 500 (Internal Server Error)
+{
+    code: "DE",
+    message: "Database Error."
+}
+
+===============================================================
+
+20. patchProfileImage
+
+URL : PATCH /api/user/profileImage
+
+header: (Authorization : Bearer Token)
+
+-request
+
+{
+    *profileImage : string
+}
+
+- response
+
+success
+
+HTTP status - 200 (ok)
+{
+    code : "SU",
+    message : "Success."
+}
+
+failure
+
+- not existing user
+
+Http status - 400 (Bad request)
+{
+    code : "NU",
+    message : "No existed User"
+}
+
+
+- DataBase Error
+
+Http status - 500 (Internal Server Error)
+{
+    code: "DE",
+    message: "Database Error."
+}
+===============================================================
+
+21. fileUpload 
+
+
+
+===============================================================
+
+22. getFile
